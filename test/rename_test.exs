@@ -3,7 +3,11 @@ defmodule RenameTest do
 
   test "should properly rename app with default options" do
     create_copy_of_app()
-    Rename.run({"Rename", "ToDoTwitterClone"}, {"rename", "to_do_twitter_clone"}, [starting_directory: "./test_copy"])
+    Rename.run(
+      {"Rename", "ToDoTwitterClone"}, 
+      {"rename", "to_do_twitter_clone"}, 
+      starting_directory: "./test_copy"
+    )
     delete_copy_of_app()
   end
 
