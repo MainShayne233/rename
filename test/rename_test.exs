@@ -35,6 +35,10 @@ defmodule RenameTest do
     ) == {:error, "bad params"}
   end
 
+  test "rename mix task works" do
+
+  end
+
   defp create_copy_of_app do
     File.mkdir(@test_copy_dir)
     File.ls!

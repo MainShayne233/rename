@@ -2,10 +2,11 @@ defmodule Mix.Tasks.Rename do
   use Mix.Task
 
   def run(args \\ [])
-  def run([old_name, new_name, old_otp, new_otp | _extra_options]) do
+  def run([old_name, new_name, old_otp, new_otp | extra_options]) do
     Rename.run(
       {old_name, new_name}, 
       {old_otp, new_otp}, 
+      run_options(extra_options)
       [ignore_files: ["./lib/mix/tasks/rename.ex"]]
     )
   end
@@ -17,4 +18,26 @@ defmodule Mix.Tasks.Rename do
     """
     {:error, :bad_params}
   end
+
+  def run_options(extra_options, options \\ [])
+  def run_options([], options) do
+    ignore_files = options[:ignore_files] || []
+    options
+    |> Enum.reject(fn {key, val} -> key == :ignore_files end)
+    |> Enum.concat([ignore_files: ignore_files])
+  end
+  def run_options([key, val | rest], options) do
+    rest
+    |> run_options(
+      options
+      |> Enum.concat([{parsed_key(key), val}])
+    )
+  end
+
+  def parsed_key(key) do
+    key
+    |> String.slice(2..-1)
+    |> String.replace("-", "_")
+  end
+
 end
