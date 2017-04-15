@@ -58,18 +58,29 @@ defmodule Rename do
       cond do
         is_valid_directory?(file_or_dir, options) ->
           rename_in_directory(names, otps, file_or_dir, options)
+          true
         is_valid_file?(file_or_dir, options) ->
-          with {:ok, file} <- File.read(file_or_dir) do
-            updated_file = file
-            |> String.replace(old_name, new_name)
-            |> String.replace(old_otp, new_otp)
-            File.write(file_or_dir, updated_file)
+          file_or_dir
+          |> File.read
+          |> case do
+            {:ok, file} ->
+              updated_file = file
+              |> String.replace(old_name, new_name)
+              |> String.replace(old_otp, new_otp)
+              File.write(file_or_dir, updated_file)
+              true
+            _ ->
+              false
           end
-        true -> :nothing
+        true ->
+          false
       end
-      unless options[:rename_files] == false do
-        file_or_dir
-        |> File.rename(String.replace(file_or_dir, old_otp, new_otp))
+      |> case do
+        true -> 
+          file_or_dir
+          |> File.rename(String.replace(file_or_dir, old_otp, new_otp))
+        _ ->
+          :nothing
       end
     end)
   end
