@@ -2,6 +2,7 @@
 For the indecisive developer
 
 [![Build Status](https://travis-ci.org/MainShayne233/rename.svg?branch=master)](https://travis-ci.org/MainShayne233/rename)
+[![Hex Version](http://img.shields.io/hexpm/v/rename.svg?style=flat)](https://hex.pm/packages/rename)
 
 ## Install
 Add to your mix dependencies in `mix.exs`
@@ -9,7 +10,7 @@ Add to your mix dependencies in `mix.exs`
 # mix.exs
 defp deps do
   [
-    {:rename, "~> 0.0.1"}
+    {:rename, "~> 0.1.0"}
   ]
 end
 ```
