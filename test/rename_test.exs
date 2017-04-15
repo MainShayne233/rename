@@ -7,7 +7,6 @@ defmodule RenameTest do
   @new_app_name "ToDoTwitterClone"
   @new_app_otp "to_do_twitter_clone"
   
-
   test "should properly rename app with default options" do
     create_copy_of_app()
     Rename.run(
@@ -29,6 +28,12 @@ defmodule RenameTest do
     delete_copy_of_app()
   end
 
+  test "should give proper error for invalid params" do
+    assert Rename.run(
+      {@old_app_name, @new_app_name}, 
+      starting_directory: @test_copy_dir
+    ) == {:error, "bad params"}
+  end
 
   defp create_copy_of_app do
     File.mkdir(@test_copy_dir)
@@ -44,7 +49,6 @@ defmodule RenameTest do
     System.cmd("rm", ["-rf", @test_copy_dir])
   end
 
-
   defp not_ignored_path(path) do
     [
       "_build",
@@ -54,5 +58,4 @@ defmodule RenameTest do
     ]
     |> Enum.find(&(&1 == path)) == nil
   end
-
 end

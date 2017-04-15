@@ -42,13 +42,7 @@ defmodule Rename do
     )
   end
 
-  def run(_names, _otp, _options) do
-    IO.puts """
-    Invalid names parameters.
-    Call should look like:
-      run({"OldName", "NewName"}, {"old_name", "new_name"})
-    """
-  end
+  def run(_names, _otp, _options), do: {:error, "bad params"}
 
   defp rename_in_directory(names = {old_name, new_name}, otps = {old_otp, new_otp}, cwd, options) do
     cwd
@@ -63,7 +57,7 @@ defmodule Rename do
           file_or_dir
           |> File.read
           |> case do
-            {:ok, file} ->
+            {:ok, file} -> 
               updated_file = file
               |> String.replace(old_name, new_name)
               |> String.replace(old_otp, new_otp)
@@ -72,15 +66,14 @@ defmodule Rename do
             _ ->
               false
           end
-        true ->
+        true -> 
           false
       end
       |> case do
         true -> 
           file_or_dir
           |> File.rename(String.replace(file_or_dir, old_otp, new_otp))
-        _ ->
-          :nothing
+        _ -> :nothing
       end
     end)
   end

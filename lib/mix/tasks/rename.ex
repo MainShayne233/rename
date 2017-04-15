@@ -15,5 +15,6 @@ defmodule Mix.Tasks.Rename do
     Call should look like:
       mix rename OldName NewName old_name NewName 
     """
+    {:error, :bad_params}
   end
 end
