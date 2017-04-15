@@ -36,7 +36,27 @@ defmodule RenameTest do
   end
 
   test "rename mix task works" do
-
+    create_copy_of_app()
+    Mix.Tasks.Rename.run([
+      @old_app_name, 
+      @new_app_name, 
+      @old_app_otp, 
+      @new_app_otp, 
+      "--starting_directory", 
+      @test_copy_dir,
+    ])
+    mix_file = File.read!(@test_copy_dir <> "/mix.exs")
+    assert mix_file |> String.contains?(@new_app_name)
+    assert mix_file |> String.contains?(@new_app_otp)
+    assert mix_file |> String.contains?(@old_app_name) == false
+    main_module = File.read!(@test_copy_dir <> "/lib/" <> @new_app_otp <> ".ex")
+    assert main_module |> String.contains?(@new_app_name)
+    assert main_module |> String.contains?(@old_app_name) == false
+    readme = File.read!(@test_copy_dir <> "/README.md")
+    assert readme |> String.contains?(@new_app_name)
+    assert readme |> String.contains?(@new_app_otp)
+    assert readme |> String.contains?(@old_app_name) == false
+    delete_copy_of_app()
   end
 
   defp create_copy_of_app do
