@@ -15,10 +15,18 @@ defmodule RenameTest do
       {@old_app_otp, @new_app_otp}, 
       starting_directory: @test_copy_dir
     )
-    #    assert File.read!(@test_copy_dir <> "/mix.exs") |> String.contains?(@new_app_name)
-    #    assert File.read!(@test_copy_dir <> "/mix.exs") |> String.contains?(@old_app_name) == false
-    #    assert File.dir?(@test_copy_dir <> "./lib/" <> @new_app_otp <> ".ex")
-    #    delete_copy_of_app()
+    mix_file = File.read!(@test_copy_dir <> "/mix.exs")
+    assert mix_file |> String.contains?(@new_app_name)
+    assert mix_file |> String.contains?(@new_app_otp)
+    assert mix_file |> String.contains?(@old_app_name) == false
+    main_module = File.read!(@test_copy_dir <> "/lib/" <> @new_app_otp <> ".ex")
+    assert main_module |> String.contains?(@new_app_name)
+    assert main_module |> String.contains?(@old_app_name) == false
+    readme = File.read!(@test_copy_dir <> "/README.md")
+    assert readme |> String.contains?(@new_app_name)
+    assert readme |> String.contains?(@new_app_otp)
+    assert readme |> String.contains?(@old_app_name) == false
+    delete_copy_of_app()
   end
 
 
@@ -26,11 +34,8 @@ defmodule RenameTest do
     File.mkdir(@test_copy_dir)
     File.ls!
     |> Enum.each(fn path -> 
-      cond do
-        File.dir?(path) and not_ignored_path(path) ->
-          System.cmd("cp", ["-r", path, @test_copy_dir])
-        true ->
-          File.cp!(path, @test_copy_dir)
+      if not_ignored_path(path) do
+        System.cmd("cp", ["-r", path, @test_copy_dir])
       end
     end)
   end
