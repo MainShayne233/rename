@@ -17,34 +17,33 @@ defmodule Rename do
 
   @default_ignore_files []
 
-  def run(names, options \\ [])
-  def run(names = {{_old_name, _new_name}, {_old_otp, _new_otp}}, options) do
+  def run(names, opts, options \\ [])
+  def run(names = {_old_name, _new_name}, otps = {_old_otp, _new_otp}, options) do
     names
     |> rename_in_directory(
+      otps,
       options[:starting_directory] || @default_starting_directory,
       options
     )
   end
 
-  def run(_names, _options) do
+  def run(_names, _otp, _options) do
     IO.puts """
     Invalid names parameters.
     Call should look like:
-      run({"old_name", "new_name"}, options) or
-      run([{"old_name", "new_name"}, {"OldName", "NewName"}], options)
-    Can pass as many name pairs as you'd like, and options are optional
+      run({"OldName", "NewName"}, {"old_name", "new_name"})
     """
   end
 
 
-  def rename_in_directory(names = {{old_name, new_name}, {old_otp, new_otp}}, cwd, options) do
+  def rename_in_directory(names = {old_name, new_name}, otps = {old_otp, new_otp}, cwd, options) do
     cwd
     |> File.ls!
     |> Enum.each(fn path ->
       file_or_dir = cwd <> "/" <> path
       cond do
         is_valid_directory?(file_or_dir, options) ->
-          rename_in_directory(names, file_or_dir, options)
+          rename_in_directory(names, otps, file_or_dir, options)
         is_valid_file?(file_or_dir, options) ->
           with {:ok, file} <- File.read(file_or_dir) do
             updated_file = file
