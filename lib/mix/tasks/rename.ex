@@ -7,7 +7,6 @@ defmodule Mix.Tasks.Rename do
       {old_name, new_name}, 
       {old_otp, new_otp}, 
       run_options(extra_options)
-      [ignore_files: ["./lib/mix/tasks/rename.ex"]]
     )
   end
   def run(_bad_args) do
@@ -23,7 +22,7 @@ defmodule Mix.Tasks.Rename do
   def run_options([], options) do
     ignore_files = options[:ignore_files] || []
     options
-    |> Enum.reject(fn {key, val} -> key == :ignore_files end)
+    |> Enum.reject(fn {key, _val} -> key == :ignore_files end)
     |> Enum.concat([ignore_files: ignore_files])
   end
   def run_options([key, val | rest], options) do
