@@ -38,7 +38,7 @@ defmodule Rename.Mixfile do
   defp deps do
     [
       {:excoveralls, "~> 0.6", only: :test},
-      {:ex_doc,      ">= 0.0.0"},
+      {:ex_doc,      ">= 0.0.0", only: :dev},
     ]
   end
 
