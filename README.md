@@ -10,7 +10,7 @@ Add to your mix dependencies in `mix.exs`
 # mix.exs
 defp deps do
   [
-    {:rename, "~> 0.1.0"}
+    {:rename, "~> 0.1.0", only: :dev}
   ]
 end
 ```
