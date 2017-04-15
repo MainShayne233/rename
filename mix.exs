@@ -29,7 +29,7 @@ defmodule Rename.Mixfile do
 
   defp package do
     [
-      licences: ["MIT"],
+      licenses: ["MIT"],
       maintainers: ["MainShayne233"],
       links: %{github: "https://github.com/MainShayne233/rename"}
     ]
