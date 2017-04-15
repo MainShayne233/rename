@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Rename do
     Rename.run(
       {old_name, new_name}, 
       {old_otp, new_otp}, 
-      [ignore_files: ["./lib/mix/tasks/rename"]]
+      [ignore_files: ["./lib/mix/tasks/rename.ex"]]
     )
   end
   def run(_bad_args) do
