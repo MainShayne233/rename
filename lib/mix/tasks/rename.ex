@@ -37,6 +37,7 @@ defmodule Mix.Tasks.Rename do
     key
     |> String.slice(2..-1)
     |> String.replace("-", "_")
+    |> String.to_atom
   end
 
 end
