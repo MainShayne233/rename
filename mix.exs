@@ -8,6 +8,8 @@ defmodule Rename.Mixfile do
       elixir: "~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
+      description: description(),
+      package: package(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -16,6 +18,20 @@ defmodule Rename.Mixfile do
         "coveralls.post": :test,
         "coveralls.html": :test,
       ]
+    ]
+  end
+
+  defp description do
+    """
+    For thoroughly renaming your Elixir projects
+    """
+  end
+
+  defp package do
+    [
+      licences: ["MIT"],
+      maintainers: ["MainShayne233"],
+      links: %{github: "https://github.com/MainShayne233/rename"}
     ]
   end
 
