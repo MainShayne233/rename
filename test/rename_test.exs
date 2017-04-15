@@ -42,7 +42,7 @@ defmodule RenameTest do
       @new_app_name, 
       @old_app_otp, 
       @new_app_otp, 
-      "--starting_directory", 
+      "--starting-directory", 
       @test_copy_dir,
     ])
     mix_file = File.read!(@test_copy_dir <> "/mix.exs")
