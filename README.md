@@ -1,6 +1,9 @@
 ## Rename
 For the indecisive developer
 
+Renames all files, modules, otp statements, etc in most standard Elixir applications
+
+
 [![Build Status](https://travis-ci.org/MainShayne233/rename.svg?branch=master)](https://travis-ci.org/MainShayne233/rename)
 [![Hex Version](http://img.shields.io/hexpm/v/rename.svg?style=flat)](https://hex.pm/packages/rename)
 
