@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Rename do
     IO.puts """
     Did not provide required app and otp names
     Call should look like:
-      mix rename OldName NewName old_name NewName 
+      mix rename OldName NewName old_name NewName
     """
     {:error, :bad_params}
   end

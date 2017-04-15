@@ -59,6 +59,15 @@ defmodule RenameTest do
     delete_copy_of_app()
   end
 
+  test "rename mix task should give proper error for bad params" do
+    {stdout, 0} = System.cmd("mix", ["rename", "not", "enought", "params"])
+    assert stdout =~ """
+                     Did not provide required app and otp names
+                     Call should look like:
+                       mix rename OldName NewName old_name NewName
+                     """
+  end
+
   defp create_copy_of_app do
     File.mkdir(@test_copy_dir)
     File.ls!
