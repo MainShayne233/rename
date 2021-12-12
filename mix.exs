@@ -13,7 +13,7 @@ defmodule Rename.Mixfile do
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
-        "coveralls": :test, 
+        coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
@@ -37,8 +37,8 @@ defmodule Rename.Mixfile do
 
   defp deps do
     [
-      {:excoveralls, "~> 0.6", only: :test},
-      {:ex_doc,      ">= 0.0.0", only: :dev},
+      {:excoveralls, "~> 0.14.4", only: :test},
+      {:ex_doc,      "~> 0.26.0", only: :dev},
     ]
   end
 
