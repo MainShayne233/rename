@@ -2,42 +2,46 @@ defmodule Mix.Tasks.Rename do
   use Mix.Task
 
   def run(args \\ [])
-  def run([old_name, new_name, old_otp, new_otp | extra_options]) do
+
+  def run([old_name, new_name, old_otp, new_otp | options]) do
+    {options, _argv, _errors} =
+      options
+      |> OptionParser.parse(
+        strict: [
+          ignore_directories: :keep,
+          ignore_files: :keep,
+          starting_directory: :string,
+          include_extensions: :keep,
+          include_files: :keep
+        ]
+      )
+
+    options =
+      options
+      |> Enum.group_by(fn {k, _v} -> k end, fn {_k, v} -> v end)
+      |> Map.to_list()
+      |> maybe_put_starting_directory(Keyword.get(options, :starting_directory))
+
     Rename.run(
-      {old_name, new_name}, 
-      {old_otp, new_otp}, 
-      run_options(extra_options)
+      {old_name, new_name},
+      {old_otp, new_otp},
+      options
     )
   end
+
   def run(_bad_args) do
-    IO.puts """
+    IO.puts("""
     Did not provide required app and otp names
     Call should look like:
       mix rename OldName NewName old_name NewName
-    """
+    """)
+
     {:error, :bad_params}
   end
 
-  def run_options(extra_options, options \\ [])
-  def run_options([], options) do
-    ignore_files = options[:ignore_files] || []
-    options
-    |> Enum.reject(fn {key, _val} -> key == :ignore_files end)
-    |> Enum.concat([ignore_files: ignore_files])
-  end
-  def run_options([key, val | rest], options) do
-    rest
-    |> run_options(
-      options
-      |> Enum.concat([{parsed_key(key), val}])
-    )
-  end
+  defp maybe_put_starting_directory(options, nil), do: options
 
-  def parsed_key(key) do
-    key
-    |> String.slice(2..-1)
-    |> String.replace("-", "_")
-    |> String.to_atom
+  defp maybe_put_starting_directory(options, starting_directory) do
+    Keyword.put(options, :starting_directory, starting_directory)
   end
-
 end
