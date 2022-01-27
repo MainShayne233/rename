@@ -1,94 +1,81 @@
 defmodule RenameTest do
-  use ExUnit.Case
+  use Rename.UnitCase
 
   @test_copy_dir "test_copy"
   @old_app_name "Rename"
   @old_app_otp "rename"
   @new_app_name "ToDoTwitterClone"
   @new_app_otp "to_do_twitter_clone"
-  
-  test "should properly rename app with default options" do
-    create_copy_of_app()
+
+  setup_all do
+    create_copy_of_app(@test_copy_dir)
+
     Rename.run(
-      {@old_app_name, @new_app_name}, 
-      {@old_app_otp, @new_app_otp}, 
+      {@old_app_name, @new_app_name},
+      {@old_app_otp, @new_app_otp},
       starting_directory: @test_copy_dir
     )
-    mix_file = File.read!(@test_copy_dir <> "/mix.exs")
-    assert mix_file |> String.contains?(@new_app_name)
-    assert mix_file |> String.contains?(@new_app_otp)
-    assert mix_file |> String.contains?(@old_app_name) == false
-    main_module = File.read!(@test_copy_dir <> "/lib/" <> @new_app_otp <> ".ex")
-    assert main_module |> String.contains?(@new_app_name)
-    assert main_module |> String.contains?(@old_app_name) == false
-    readme = File.read!(@test_copy_dir <> "/README.md")
-    assert readme |> String.contains?(@new_app_name)
-    assert readme |> String.contains?(@new_app_otp)
-    assert readme |> String.contains?(@old_app_name) == false
-    delete_copy_of_app()
+
+    on_exit(fn -> delete_copy_of_app(@test_copy_dir) end)
   end
 
-  test "should give proper error for invalid params" do
-    assert Rename.run(
-      {@old_app_name, @new_app_name}, 
-      starting_directory: @test_copy_dir
-    ) == {:error, "bad params"}
-  end
+  describe "run/3" do
+    test "should rename mix file" do
+      file = File.read!(@test_copy_dir <> "/mix.exs")
 
-  test "rename mix task works" do
-    create_copy_of_app()
-    Mix.Tasks.Rename.run([
-      @old_app_name, 
-      @new_app_name, 
-      @old_app_otp, 
-      @new_app_otp, 
-      "--starting-directory", 
-      @test_copy_dir,
-    ])
-    mix_file = File.read!(@test_copy_dir <> "/mix.exs")
-    assert mix_file |> String.contains?(@new_app_name)
-    assert mix_file |> String.contains?(@new_app_otp)
-    assert mix_file |> String.contains?(@old_app_name) == false
-    main_module = File.read!(@test_copy_dir <> "/lib/" <> @new_app_otp <> ".ex")
-    assert main_module |> String.contains?(@new_app_name)
-    assert main_module |> String.contains?(@old_app_name) == false
-    readme = File.read!(@test_copy_dir <> "/README.md")
-    assert readme |> String.contains?(@new_app_name)
-    assert readme |> String.contains?(@new_app_otp)
-    assert readme |> String.contains?(@old_app_name) == false
-    delete_copy_of_app()
-  end
+      assert String.contains?(file, @new_app_name)
+      assert String.contains?(file, @old_app_name) == false
+      assert String.contains?(file, @new_app_otp)
+      assert String.contains?(file, @old_app_otp) == false
+    end
 
-  test "rename mix task should give proper error for bad params" do
-    {stdout, 0} = System.cmd("mix", ["rename", "not", "enought", "params"])
-    assert stdout =~ """
-                     Did not provide required app and otp names
-                     Call should look like:
-                       mix rename OldName NewName old_name NewName
-                     """
-  end
+    test "should rename main module" do
+      file = File.read!(@test_copy_dir <> "/lib/" <> @new_app_otp <> ".ex")
 
-  defp create_copy_of_app do
-    File.mkdir(@test_copy_dir)
-    File.ls!
-    |> Enum.each(fn path -> 
-      if not_ignored_path(path) do
-        System.cmd("cp", ["-r", path, @test_copy_dir])
-      end
-    end)
-  end
+      assert String.contains?(file, @new_app_name)
+      assert String.contains?(file, @old_app_name) == false
+      assert String.contains?(file, @new_app_otp)
+      assert String.contains?(file, @old_app_otp) == false
+    end
 
-  defp delete_copy_of_app() do
-    System.cmd("rm", ["-rf", @test_copy_dir])
-  end
+    test "should rename README" do
+      file = File.read!(@test_copy_dir <> "/README.md")
 
-  defp not_ignored_path(path) do
-    [
-      "_build",
-      "deps", 
-      @test_copy_dir,
-      ".git",
-    ]
-    |> Enum.find(&(&1 == path)) == nil
+      assert String.contains?(file, @new_app_name)
+      assert String.contains?(file, @old_app_name) == false
+      assert String.contains?(file, @new_app_otp)
+      assert String.contains?(file, @old_app_otp) == false
+    end
+
+    test "should rename gitignore" do
+      file = File.read!(@test_copy_dir <> "/.gitignore")
+
+      assert String.contains?(file, @new_app_otp)
+      assert String.contains?(file, @old_app_otp) == false
+    end
+
+    test "should rename config" do
+      file = File.read!(@test_copy_dir <> "/config/test.exs")
+
+      assert String.contains?(file, @new_app_name)
+      assert String.contains?(file, @old_app_name) == false
+      assert String.contains?(file, @new_app_otp)
+      assert String.contains?(file, @old_app_otp) == false
+    end
+
+    test "should rename dir" do
+      assert File.dir?("#{@test_copy_dir}/lib/#{@new_app_otp}")
+    end
+
+    test "should rename tests" do
+      assert File.exists?("#{@test_copy_dir}/test/#{@new_app_otp}_test.exs")
+    end
+
+    test "should give proper error for invalid params" do
+      assert Rename.run(
+               {@old_app_name, @new_app_name},
+               starting_directory: @test_copy_dir
+             ) == {:error, "bad params"}
+    end
   end
 end
